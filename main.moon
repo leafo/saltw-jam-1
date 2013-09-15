@@ -8,7 +8,7 @@ export ^
 
 class Game
   new: =>
-    @viewport = Viewport scale: 2
+    @viewport = Viewport scale: 3
 
   draw: =>
     @viewport\apply!
