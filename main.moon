@@ -1,9 +1,30 @@
 
 require "lovekit.all"
+require "lovekit.reloader"
 
 {graphics: g} = love
 
 export ^
+
+class Bullet extends Entity
+  lazy sprite: -> Spriter "images/disk.png", 32, 16, 1
+
+  w: 2
+  h: 2
+
+  speed: 250
+
+  new: (x,y, @dir=Vec2d(1, 0)) =>
+    super x,y
+    @anim = @sprite\seq {0, 1, 2}, 0.1
+
+  update: (dt) =>
+    @move unpack @speed * dt * @dir
+    @anim\update dt
+    true
+
+  draw: =>
+    @anim\draw @x, @y
 
 class Player extends Entity
   lazy sprite: -> Spriter "images/player.png"
@@ -83,6 +104,7 @@ class Player extends Entity
 
       @anim\splice_states {1}, (name) -> name\gsub "walk", "stand"
       @anim\set_state "stand_d"
+      @face_dir = Vec2d(0, 1)
 
   update: (dt) =>
     move = movement_vector!
@@ -108,6 +130,7 @@ class Player extends Entity
       else
         ""
 
+      @face_dir = move\normalized!
       @last_direction = ud .. lr
       @anim\set_state "walk_" .. @last_direction, 2
 
@@ -116,12 +139,20 @@ class Player extends Entity
 
   draw: =>
     @anim\draw @x, @y
+    COLOR\push 255,128,128,128
+    Box.draw @
+    COLOR\pop!
+
+  shoot: (world) =>
+    world.entities\add Bullet @x, @y, @face_dir\dup!
 
 class Game
   new: =>
     @viewport = Viewport scale: 2
+    @player = Player 10, 10
+
     @entities = with DrawList!
-      \add Player 10, 10
+      \add @player
 
   draw: =>
     @viewport\apply!
@@ -132,6 +163,10 @@ class Game
 
   update: (dt) =>
     @entities\update dt
+
+  on_key: (key) =>
+    if key == "z"
+      @player\shoot @
 
 load_font = (img, chars)->
   font_image = imgfy img
