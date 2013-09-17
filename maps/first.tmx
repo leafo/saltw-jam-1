@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16">
+  <image source="../images/tiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztzzERgDAQAMHvXkAKDOAAE/GvKKSIgacgMFtsf5cRkQAAwGPHBg3LdWtF5wb9Pnz48OHDhw8fPnz4+M7H1Ive7gYAAOB/BsOIVws=
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1icOQmEQReG3G7bAtkhYAhuheqqneqqneqrmSMQz/CEMCedLjhtx5WSZJEmSpFeFxPQ9pegBkkKUowd8SCV6wB+pUo3q1KAmtUIXpWlTh7rUoz4NQhelGdKIxjShKc1CF6WZ04KWtKI1bXLufv1f2dKO9nSgI51CF6U504WudKM7PUIXva+YmCRJkiRJyvcEAQgjqw==
+  </data>
+ </layer>
+ <objectgroup name="objects" width="50" height="50">
+  <object name="spawn" x="266" y="306"/>
+ </objectgroup>
+ <layer name="collision" width="50" height="50">
+  <properties>
+   <property name="hidden" value="true"/>
+   <property name="solid" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1zEKADAIBEHL/P/FqfICcyAyA9e7pVUAAMBzmpuic4uO/3ToSNChI0GHjgQdOhJ0zOvY8EcBAACwwwWFhgIB
+  </data>
+ </layer>
+</map>

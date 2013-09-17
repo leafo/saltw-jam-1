@@ -1,6 +1,6 @@
 
-require "lovekit.all"
 require "lovekit.reloader"
+require "lovekit.all"
 
 {graphics: g} = love
 
@@ -9,8 +9,11 @@ export ^
 class Bullet extends Entity
   lazy sprite: -> Spriter "images/disk.png", 32, 16, 1
 
-  w: 2
-  h: 2
+  w: 4
+  h: 4
+
+  ox: 16 - 2
+  oy: 8 - 2
 
   speed: 250
 
@@ -18,19 +21,26 @@ class Bullet extends Entity
     super x,y
     @anim = @sprite\seq {0, 1, 2}, 0.1
 
-  update: (dt) =>
+  update: (dt, world) =>
     @move unpack @speed * dt * @dir
     @anim\update dt
-    true
+    not world\collides @
 
   draw: =>
-    @anim\draw @x, @y
+    @anim\draw @x - @ox, @y - @oy
+
+    COLOR\push 255,128,128,128
+    Box.draw @
+    COLOR\pop!
 
 class Player extends Entity
   lazy sprite: -> Spriter "images/player.png"
 
   w: 10
   h: 10
+
+  ox: 8
+  oy: 20
 
   speed: 80
 
@@ -106,9 +116,11 @@ class Player extends Entity
       @anim\set_state "stand_d"
       @face_dir = Vec2d(0, 1)
 
-  update: (dt) =>
+  update: (dt, world) =>
     move = movement_vector!
-    @move unpack move * @speed * dt
+    dx, dy = unpack move * @speed * dt
+
+    @fit_move dx, dy, world
 
     if move\is_zero!
       if @last_direction
@@ -138,7 +150,7 @@ class Player extends Entity
     true
 
   draw: =>
-    @anim\draw @x, @y
+    @anim\draw @x - @ox, @y - @oy
     COLOR\push 255,128,128,128
     Box.draw @
     COLOR\pop!
@@ -154,15 +166,31 @@ class Game
     @entities = with DrawList!
       \add @player
 
+    @map = TileMap.from_tiled "maps.first", {
+      object: (o) ->
+        switch o.name
+          when "spawn"
+            @player.x = o.x
+            @player.y = o.y
+    }
+
   draw: =>
     @viewport\apply!
 
     g.print "Hello World Welcome to My Game", 10, 10
+
+    @viewport\center_on @player
+
+    @map\draw @viewport
     @entities\draw!
     @viewport\pop!
 
   update: (dt) =>
-    @entities\update dt
+    @map\update dt
+    @entities\update dt, @
+
+  collides: (thing) =>
+    @map\collides thing
 
   on_key: (key) =>
     if key == "z"
