@@ -6,6 +6,17 @@ require "lovekit.all"
 
 export ^
 
+class Enemy extends Entity
+  w: 8
+  h: 8
+  life: 10
+
+  update: (dt) =>
+    true
+
+  draw: =>
+    super {100, 255, 100, 128}
+
 class Bullet extends Entity
   lazy sprite: -> Spriter "images/disk.png", 32, 16, 1
 
@@ -165,6 +176,7 @@ class Game
 
     @entities = with DrawList!
       \add @player
+      \add Enemy 300, 350
 
     @map = TileMap.from_tiled "maps.first", {
       object: (o) ->
@@ -175,15 +187,14 @@ class Game
     }
 
   draw: =>
-    @viewport\apply!
-
-    g.print "Hello World Welcome to My Game", 10, 10
-
     @viewport\center_on @player
+    @viewport\apply!
 
     @map\draw @viewport
     @entities\draw!
     @viewport\pop!
+
+    g.print "Hello World Welcome to My Game", 10, 10
 
   update: (dt) =>
     @map\update dt
@@ -195,6 +206,9 @@ class Game
   on_key: (key) =>
     if key == "z"
       @player\shoot @
+
+    if key == " "
+      print Box.__tostring @player
 
 load_font = (img, chars)->
   font_image = imgfy img
