@@ -194,7 +194,8 @@ class Game
     @entities\draw!
     @viewport\pop!
 
-    g.print "Hello World Welcome to My Game", 10, 10
+    -- g.print "Hello World Welcome to My Game", 10, 10
+    g.print love.timer.getFPS!, 10, 10
 
   update: (dt) =>
     @map\update dt
@@ -224,4 +225,5 @@ love.load = ->
 
   export dispatch = Dispatcher Game!
   dispatch\bind love
+
 
